@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article lang="">
+  <para>Практическая работа №5</para>
+  <para>Тема практической работы: Команда SELECT</para>
+  <para>Цель практической работы: Изучение основ выборки данных, конструкции DISTINCT | ALL, сортировки данных, конструкции TOP, конструкции OFFSET и FETCH.</para>
+  <para>Теоретическая часть:</para>
+  <para>Подавляющее большинство пользователей используют SQL для организации выборки данных. Для выборки данных из БД используется запрос SELECT. Он позволяет фильтровать выбранные данные и преобразовать их к нужному виду. Результатом выполнения запроса SE- LECT является другая таблица, к которой снова может быть применен запрос SELECT.</para>
+  <para>Полный синтаксис инструкции SELECT сложен, однако основные предложения можно вкратце описать следующим образом:</para>
+  <para>[ WITH { [ XMLNAMESPACES ,] [ &lt;common_table_expression&gt; ] } ] SELECT select_list [ INTO new_table ]</para>
+  <para>[ FROM table_source ]</para>
+  <para>[ WHERE search_condition ]</para>
+  <para>[ GROUP BY group_by_expression ] [ HAVING search_condition ]</para>
+  <para>[ ORDER BY order_expression [ ASC | DESC ] ]</para>
+  <para>Обработка элементов запроса SELECT выполняется в следующей последовательности:</para>
+  <para>FROM – определяет имена используемых таблиц;</para>
+  <para>WHERE – фильтрует строки таблицы в соответствии с заданными условиями;</para>
+  <para>GROUP BY – группирует строки, имеющие одинаковые значения в указанном столбце;</para>
+  <para>HAVING – фильтрует группы строк в соответствии с указанным условием;</para>
+  <para>SELECT – форматирует выходные данные;</para>
+  <para>ORDER BY – сортирует результаты выполнения запроса.</para>
+  <para>Порядок предложений в запросе SELECT не может быть изменен. Предложения SE- LECT и FROM являются обязательными, присутствие остальных зависит от контекста.</para>
+  <para>В предложении SELECT указывается список столбцов, которые должны быть возвращены запросом. Можно указать исходные элементы или вычисляемые поля во время выполнения запроса.</para>
+  <para>Конструкция DISTINCT | ALL исключает / разрешает вывод повторяющихся строк.</para>
+  <para>Конструкция ALL используется по умолчанию.</para>
+  <para>* означает вывод всех столбцов указанной таблицы. В случае, если выборка производится из нескольких таблиц, перед символом звездочки может указываться имя таблицы.</para>
+  <para>SQL-запрос может содержать вычисляемые столбцы, значения которых могут определятся на основе значений данных, хранящихся в БД конструкции. Вычисляемым столбцам следует давать название с помощью ключевого слова AS.</para>
+  <para>Вычисляемый столбец можно создать как: &lt;Новое поле&gt; = &lt;выражение&gt;</para>
+  <para>Если название столбца состоит из нескольких слов, разделенных пробелами, следует их записать в квадратных скобках: [].</para>
+  <para>Сортировка данных выполняется с помощью команды ORDER BY, которая добавляется в конец запроса, после чего перечисляется список столбцов. Для каждого столбца указы вается тип сортировки ASC | DESC (ascending – по возрастанию | descending – по убыванию). ASC – по умолчанию, можно не указывать.</para>
+  <para>Конструкция TOP &lt;N&gt; позволяет выбрать определенное количество строк из таблицы. Дополнительный оператор PERCENT позволяет выбрать процентное количество строк из таблицы. Дополнительный оператор WITH TIES позволяет выбрать все строки с такими же свой ствами.</para>
+  <para>Конструкция OFFSET &lt;N&gt; ROWS указывает число строк, которые необходимо пропустить, прежде чем будет начат возврат строк из выражения запроса.</para>
+  <para>Конструкция FETCH NEXT &lt;N&gt; ROWS ONLY указывает число строк, возвращаемых после обработки предложения OFFSET.</para>
+  <para>На языке T-SQL регистр не имеет значение (case insensitive).</para>
+  <para>Практическая часть:</para>
+  <para>Ход работы:</para>
+  <para>Задание</para>
+  <para>Дана таблица Академики:</para>
+  <informaltable frame="all">
+    <tgroup cols="4"><tbody><row><entry><para>ФИО</para></entry><entry><para>Дата_рождения</para></entry><entry><para>Специализация</para></entry><entry><para>Год_присвоения_звания</para></entry></row><row><entry><para>Аничков Николай Николаевич</para></entry><entry><para>1885-11-03</para></entry><entry><para>медицина</para></entry><entry><para>1939</para></entry></row><row><entry><para>Бартольд Василий Владимирович</para></entry><entry><para>1869-11-15</para></entry><entry><para>историк</para></entry><entry><para>1913</para></entry></row><row><entry><para>Белопольский Аристарх Аполлонович</para></entry><entry><para>1854-07-13</para></entry><entry><para>астрофизик</para></entry><entry><para>1903</para></entry></row><row><entry><para>Бородин Иван Парфеньевич</para></entry><entry><para>1847-01-30</para></entry><entry><para>ботаник</para></entry><entry><para>1902</para></entry></row><row><entry><para>Вальден Павел Иванович</para></entry><entry><para>1863-07-26</para></entry><entry><para>химик-технолог</para></entry><entry><para>1910</para></entry></row><row><entry><para>Вернадский Владимир Иванович</para></entry><entry><para>1863-03-12</para></entry><entry><para>геохимик</para></entry><entry><para>1908</para></entry></row><row><entry><para>Виноградов Павел Гаврилович</para></entry><entry><para>1854-11-30</para></entry><entry><para>историк</para></entry><entry><para>1914</para></entry></row><row><entry><para>Ипатьев Владимир Николаевич</para></entry><entry><para>1867-11-21</para></entry><entry><para>химик</para></entry><entry><para>1916</para></entry></row><row><entry><para>Истрин Василий Михайлович</para></entry><entry><para>1865-02-22</para></entry><entry><para>филолог</para></entry><entry><para>1907</para></entry></row><row><entry><para>Карпинский Александр Петрович</para></entry><entry><para>1847-01-07</para></entry><entry><para>геолог</para></entry><entry><para>1889</para></entry></row><row><entry><para>Коковцов Павел Константинович</para></entry><entry><para>1861-07-01</para></entry><entry><para>историк</para></entry><entry><para>1906</para></entry></row><row><entry><para>Курнаков Николай Семёнович</para></entry><entry><para>1860-12-06</para></entry><entry><para>химик</para></entry><entry><para>1913</para></entry></row><row><entry><para>Марр Николай Яковлевич</para></entry><entry><para>1865-01-06</para></entry><entry><para>лингвист</para></entry><entry><para>1912</para></entry></row><row><entry><para>Насонов Николай Викторович</para></entry><entry><para>1855-02-26</para></entry><entry><para>зоолог</para></entry><entry><para>1906</para></entry></row><row><entry><para>Ольденбург Сергей Фёдорович</para></entry><entry><para>1863-09-26</para></entry><entry><para>историк</para></entry><entry><para>1903</para></entry></row><row><entry><para>Павлов Иван Петрович</para></entry><entry><para>1849-09-26</para></entry><entry><para>физиолог</para></entry><entry><para>1907</para></entry></row><row><entry><para>Перетц Владимир Николаевич</para></entry><entry><para>1870-01-31</para></entry><entry><para>филолог</para></entry><entry><para>1914</para></entry></row><row><entry><para>Соболевский Алексей Иванович</para></entry><entry><para>1857-01-07</para></entry><entry><para>лингвист</para></entry><entry><para>1900</para></entry></row><row><entry><para>Стеклов Владимир Андреевич</para></entry><entry><para>1864-01-09</para></entry><entry><para>математик</para></entry><entry><para>1912</para></entry></row></tbody></tgroup>
+  </informaltable>
+  <para/>
+  <para>Пример 1: Вывести список академиков: SELECT *</para>
+  <para>FROMАкадемики</para>
+  <para>Пример 2: Вывести ФИО и дату рождения всех академиков: SELECT ФИО, Дата_рождения</para>
+  <para>FROM Академики</para>
+  <para>Пример 3: Создайте вычисляемое поле «Информация», содержащее информацию об академиках в таком виде: «Академик Петров Петр Петрович, специализация: математика»:</para>
+  <para>SELECT 'Академик ' + ФИО + ', специализация: ' + Специализация AS Информация</para>
+  <para>FROM Академики</para>
+  <para>Пример 4: Вывести ФИО академиков и номер следующего года после присвоения звания: SELECT</para>
+  <para>ФИО ,[Через год] = Год_присвоения_звания + 1</para>
+  <para>FROM Академики</para>
+  <para>Пример 5: Выведите список специализаций, убрав дубликаты: SELECT DISTINCTСпециализация</para>
+  <para>FROM Академики</para>
+  <para>Пример 6: Вывести список академиков, отсортированный по возрастанию года присвоения звания:</para>
+  <para>SELECT *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY Год_присвоения_звания</para>
+  <para>Пример 7: Вывести список академиков, отсортированный в обратном алфавитном по рядке по полю «Специализация» и в алфавитном порядке по полю «ФИО»:</para>
+  <para>SELECT *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY Специализация DESC ,ФИО ASC</para>
+  <para>Пример 8: Вывести первые две строки из списка академиков, отсортированного в алфавитном порядке по полю «ФИО»:</para>
+  <para>SELECT TOP  2 *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY ФИО ASC</para>
+  <para>Пример 9: Вывести первые 30% строк из списка академиков, отсортированного по возрастанию года присвоения звания:</para>
+  <para>SELECT TOP 30 PERCENT *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY Год_присвоения_звания</para>
+  <para>Пример 10: Вывести из таблицы «Академики», отсортированной по возрастанию года присвоения звания, список академиков, у которых год присвоения звания – один из первых четырех в отсортированной таблице:</para>
+  <para>SELECT TOP 4 WITH TIES *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY Год_присвоения_звания</para>
+  <para>Пример 11: Вывести, начиная с третьего, список академиков, отсортированный в алфавитном порядке ФИО:</para>
+  <para>SELECT *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY ФИО OFFSET 2 ROWS</para>
+  <para>Пример 12: Вывести, начиная с третьего и до десятого, список академиков, отсортированный в алфавитном порядке ФИО:</para>
+  <para>SELECT *</para>
+  <para>FROM Академики</para>
+  <para>ORDER BY ФИО </para>
+  <para>OFFSET 2 ROWS</para>
+  <para>FETCH NEXT 8 ROWS ONLY</para>
+  <para><anchor id="_bookmark9"/>Задание</para>
+  <orderedlist>
+    <listitem>
+      <para>Вывести ФИО, специализацию и дату рождения всех академиков.</para>
+    </listitem>
+    <listitem>
+      <para>Создать вычисляемое поле «О присвоении звания», которое содержит информацию об академиках в виде: «Петров Петр Петрович получил звание в 1974».</para>
+    </listitem>
+    <listitem>
+      <para>Вывести ФИО академиков и вычисляемое поле «Через 5 лет после присвоения звания».</para>
+    </listitem>
+    <listitem>
+      <para>Вывести список годов присвоения званий, убрав дубликаты.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести список академиков, отсортированный по убыванию даты рождения.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести список академиков, отсортированный в обратном алфавитном порядке специализаций, по убыванию года присвоения звания, и в алфавитном порядке ФИО.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести первую строку из списка академиков, отсортированного в обратном алфавитном порядке ФИО.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести фамилию академика, который раньше всех получил звание.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести первые 10% строк из списка академиков, отсортированного в алфавитном порядке ФИО.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести из таблицы «Академики», отсортированной по возрастанию года присвоения звания, список академиков, у которых год присвоения звания – один из первых пяти в отсортированной таблице.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести, начиная с десятого, список академиков, отсортированный по возрастанию даты рождения.</para>
+    </listitem>
+    <listitem>
+      <para>Вывести девятую и десятую строку из списка академиков, отсортированного в алфавитном порядке ФИО.</para>
+    </listitem>
+  </orderedlist>
+  <para/>
+</article>
